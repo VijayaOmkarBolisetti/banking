@@ -38,7 +38,7 @@ export function SplashScreen() {
   }, [currentStep, hydrated, isAuthenticated, navigate, onboardingSeen])
 
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-primary to-[#2439a8] px-8 text-white">
+    <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-primary to-[#2439a8] px-8 text-white lg:rounded-[32px]">
       <motion.div
         initial={{ opacity: 0, transform: 'scale(0.95) translateY(8px)' }}
         animate={{ opacity: 1, transform: 'scale(1) translateY(0px)' }}

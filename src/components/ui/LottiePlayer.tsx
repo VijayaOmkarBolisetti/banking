@@ -1,15 +1,9 @@
 import lottie, { type AnimationItem } from 'lottie-web'
-import { Loader2 } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import loadingAnimation from '../../assets/lottie/loading.json'
-import successAnimation from '../../assets/lottie/success.json'
 
 type LottieName = 'loading' | 'success'
-
-const animations: Record<LottieName, object> = {
-  loading: loadingAnimation,
-  success: successAnimation,
-}
 
 interface LottiePlayerProps {
   name: LottieName
@@ -22,6 +16,7 @@ export function LottiePlayer({ name, className = 'h-28 w-28', loop = true }: Lot
   const animationRef = useRef<AnimationItem | null>(null)
 
   useEffect(() => {
+    if (name !== 'loading') return undefined
     const container = containerRef.current
     if (!container) return undefined
 
@@ -31,7 +26,7 @@ export function LottiePlayer({ name, className = 'h-28 w-28', loop = true }: Lot
       renderer: 'svg',
       loop,
       autoplay: true,
-      animationData: animations[name],
+      animationData: loadingAnimation,
     })
 
     return () => {
@@ -40,12 +35,22 @@ export function LottiePlayer({ name, className = 'h-28 w-28', loop = true }: Lot
     }
   }, [name, loop])
 
+  if (name === 'success') {
+    return (
+      <div className={`flex items-center justify-center ${className}`} role="img" aria-label="Success">
+        <div className="flex h-full w-full items-center justify-center rounded-full bg-emerald-500 text-white shadow-md">
+          <Check className="h-[48%] w-[48%]" strokeWidth={3.5} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       ref={containerRef}
       className={`lottie-player ${className}`}
       role="img"
-      aria-label={name === 'success' ? 'Success' : 'Loading'}
+      aria-label="Loading"
     />
   )
 }

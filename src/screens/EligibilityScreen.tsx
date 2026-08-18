@@ -47,14 +47,12 @@ export function EligibilityScreen() {
 
   return (
     <Screen title="Checking eligibility" subtitle="This usually takes a few seconds.">
-      <div className="pt-2">
-        <div className="flex justify-center py-2">
-          {done ? (
-            <LottiePlayer name="success" loop={false} className="h-28 w-28" />
-          ) : (
-            <LottiePlayer name="loading" className="h-28 w-28" />
-          )}
-        </div>
+      <div className="pt-1">
+        {!done ? (
+          <div className="mb-3 flex justify-center py-1">
+            <LottiePlayer name="loading" className="h-20 w-20" />
+          </div>
+        ) : null}
         <div className="mb-4 rounded-[22px] bg-white p-4 shadow-sm">
           <ProcessingSteps steps={PRE_CHECKS} />
         </div>

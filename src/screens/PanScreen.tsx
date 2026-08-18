@@ -98,7 +98,7 @@ export function PanScreen() {
             <div className="mx-auto flex h-24 w-24 items-center justify-center">
               <LottiePlayer name="success" loop={false} className="h-24 w-24" />
             </div>
-            <p className="mt-2 text-lg font-bold text-ink">Verified successfully ✓</p>
+            <p className="mt-2 text-lg font-bold text-ink">Verified successfully</p>
             <p className="mt-1 text-sm text-muted">Name matched to {pan.holderName || profile.fullName.toUpperCase()}</p>
           </motion.div>
         ) : null}

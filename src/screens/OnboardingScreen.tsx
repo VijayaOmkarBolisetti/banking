@@ -187,14 +187,14 @@ export function OnboardingScreen() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-surface px-5 pt-4">
+    <div className="flex h-full min-h-0 flex-col bg-surface px-5 pt-4 lg:px-10 lg:pt-8">
       <div className="flex items-center justify-between">
         <Logo size={36} />
         <button type="button" onClick={finish} className="text-sm font-semibold text-muted">
           Skip
         </button>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:px-4">
         <AnimatePresence mode="wait">
           <motion.div
             key={slide.id}
@@ -202,17 +202,38 @@ export function OnboardingScreen() {
             animate={{ opacity: 1, transform: 'translateX(0px)' }}
             exit={{ opacity: 0, transform: 'translateX(-18px)' }}
             transition={{ duration: 0.24, ease: [0.23, 1, 0.32, 1] }}
-            className="w-full text-center"
+            className="flex w-full flex-col items-center text-center lg:flex-row lg:items-center lg:gap-12 lg:text-left"
           >
-            <div className="mx-auto mb-6 flex h-52 w-full max-w-[300px] items-center justify-center overflow-hidden rounded-[28px] bg-gradient-to-b from-white to-[#f8faff] px-3 py-2 shadow-[0_12px_40px_rgb(59_91_219_/_0.1)]">
+            <div className="mb-6 flex h-52 w-full max-w-[300px] shrink-0 items-center justify-center overflow-hidden rounded-[28px] bg-gradient-to-b from-white to-[#f8faff] px-3 py-2 shadow-[0_12px_40px_rgb(59_91_219_/_0.1)] lg:mb-0 lg:h-72 lg:max-w-none lg:w-[420px]">
               <Illustration />
             </div>
-            <h2 className="text-[28px] leading-8 font-extrabold text-ink">{slide.title}</h2>
-            <p className="mx-auto mt-3 max-w-xs text-[15px] leading-6 text-muted">{slide.description}</p>
+            <div className="w-full max-w-md lg:max-w-sm">
+              <h2 className="text-[28px] leading-8 font-extrabold text-ink lg:text-4xl lg:leading-10">{slide.title}</h2>
+              <p className="mx-auto mt-3 max-w-xs text-[15px] leading-6 text-muted lg:mx-0 lg:max-w-none lg:text-base">
+                {slide.description}
+              </p>
+              <div className="mt-6 hidden justify-start gap-2 lg:flex">
+                {ONBOARDING_SLIDES.map((item, dotIndex) => (
+                  <span
+                    key={`lg-${item.id}`}
+                    className={`h-2 rounded-full transition-[width,background-color] duration-200 ${
+                      dotIndex === index ? 'w-6 bg-primary' : 'w-2 bg-slate-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <div className="mt-8 hidden lg:block lg:max-w-[220px]">
+                {last ? (
+                  <Button onClick={finish}>Get Started</Button>
+                ) : (
+                  <Button onClick={() => setIndex((value) => value + 1)}>Next</Button>
+                )}
+              </div>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="mb-5 flex justify-center gap-2">
+      <div className="mb-5 flex justify-center gap-2 lg:hidden">
         {ONBOARDING_SLIDES.map((item, dotIndex) => (
           <span
             key={item.id}
@@ -222,15 +243,13 @@ export function OnboardingScreen() {
           />
         ))}
       </div>
-      {last ? (
-        <div className="screen-footer -mx-5 px-5 pt-3">
+      <div className="screen-footer -mx-5 px-5 pt-3 lg:hidden">
+        {last ? (
           <Button onClick={finish}>Get Started</Button>
-        </div>
-      ) : (
-        <div className="screen-footer -mx-5 px-5 pt-3">
+        ) : (
           <Button onClick={() => setIndex((value) => value + 1)}>Next</Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
