@@ -65,7 +65,7 @@ export function ConsentScreen() {
           const status = consent[item.key]
           return (
             <Card key={item.key} className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(140deg,var(--c-primary-soft),color-mix(in_srgb,var(--c-primary)_18%,transparent))] text-primary">
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
@@ -76,7 +76,7 @@ export function ConsentScreen() {
                 type="button"
                 onClick={() => setPermission(item.key, status === 'granted' ? 'not_now' : 'granted')}
                 className={`pressable rounded-full px-3 py-1.5 text-xs font-bold ${
-                  status === 'granted' ? 'bg-emerald-50 text-success' : 'bg-slate-100 text-slate-600'
+                  status === 'granted' ? 'bg-success-soft text-success' : 'bg-subtle text-muted'
                 }`}
               >
                 {statusLabel(status)}

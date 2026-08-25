@@ -30,7 +30,7 @@ export function ProcessingLoader({
       </div>
       <h2 className="mt-2 text-lg font-extrabold text-ink">{title}</h2>
       <p className="mt-1 max-w-xs text-sm text-muted">{subtitle}</p>
-      <div className="mt-6 w-full rounded-[24px] bg-white p-5 shadow-sm">
+      <div className="mt-6 w-full rounded-[24px] border border-line/70 bg-card p-5 card-shadow">
         <ProcessingSteps steps={steps} />
       </div>
     </div>

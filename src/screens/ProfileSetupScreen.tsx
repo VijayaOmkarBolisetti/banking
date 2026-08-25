@@ -16,7 +16,6 @@ export function ProfileSetupScreen() {
   const setProfile = useAppStore((state) => state.setProfile)
   const setCurrentStep = useAppStore((state) => state.setCurrentStep)
   const [form, setForm] = useState<UserProfile>(profile)
-  const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
   function update<K extends keyof UserProfile>(key: K, value: UserProfile[K]) {
@@ -27,11 +26,10 @@ export function ProfileSetupScreen() {
     setLoading(true)
     const result = await profileService.saveProfile(form)
     setLoading(false)
-    if (!result.success) {
-      setErrors(result.errors ?? {})
-      return
-    }
-    setProfile(form)
+    // Blanks come back filled with demo data, so this always advances.
+    const saved = result.profile ?? form
+    setForm(saved)
+    setProfile(saved)
     setCurrentStep('pan')
     navigate(ROUTES.PAN)
   }
@@ -50,7 +48,6 @@ export function ProfileSetupScreen() {
         <Input
           label="Full name"
           value={form.fullName}
-          error={errors.fullName}
           onChange={(event) => update('fullName', event.target.value)}
           placeholder="Vijay Sharma"
         />
@@ -58,21 +55,18 @@ export function ProfileSetupScreen() {
           label="Date of birth"
           type="date"
           value={form.dateOfBirth}
-          error={errors.dateOfBirth}
           onChange={(event) => update('dateOfBirth', event.target.value)}
         />
         <Select
           label="Gender"
           options={GENDER_OPTIONS}
           value={form.gender}
-          error={errors.gender}
           onChange={(event) => update('gender', event.target.value as Gender)}
         />
         <Input
           label="Email address"
           type="email"
           value={form.email}
-          error={errors.email}
           onChange={(event) => update('email', event.target.value)}
           placeholder="you@email.com"
         />
@@ -80,7 +74,6 @@ export function ProfileSetupScreen() {
           label="Employment type"
           options={EMPLOYMENT_OPTIONS}
           value={form.employmentType}
-          error={errors.employmentType}
           onChange={(event) => update('employmentType', event.target.value as EmploymentType)}
         />
         <Input
@@ -88,7 +81,6 @@ export function ProfileSetupScreen() {
           inputMode="numeric"
           prefix="₹"
           value={form.monthlyIncome === '' ? '' : String(form.monthlyIncome)}
-          error={errors.monthlyIncome}
           onChange={(event) => {
             const raw = event.target.value.replace(/\D/g, '')
             update('monthlyIncome', raw ? Number(raw) : '')

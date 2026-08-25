@@ -105,7 +105,7 @@ export function ProfileTermsScreen() {
   return (
     <Screen title="Terms & Conditions" onBack={() => navigate(-1)}>
       <Card className="mt-3">
-        <p className="text-sm leading-6 text-slate-600 whitespace-pre-line">{TERMS_TEXT}</p>
+        <p className="text-sm leading-6 text-muted whitespace-pre-line">{TERMS_TEXT}</p>
       </Card>
     </Screen>
   )
@@ -116,7 +116,7 @@ export function ProfilePrivacyScreen() {
   return (
     <Screen title="Privacy Policy" onBack={() => navigate(-1)}>
       <Card className="mt-3">
-        <p className="text-sm leading-6 text-slate-600 whitespace-pre-line">{PRIVACY_TEXT}</p>
+        <p className="text-sm leading-6 text-muted whitespace-pre-line">{PRIVACY_TEXT}</p>
       </Card>
     </Screen>
   )
@@ -135,8 +135,8 @@ function Toggle({ label, on, onToggle }: { label: string; on: boolean; onToggle:
   return (
     <button type="button" onClick={onToggle} className="flex w-full items-center justify-between">
       <span className="text-sm font-semibold">{label}</span>
-      <span className={`h-6 w-11 rounded-full p-1 ${on ? 'bg-primary' : 'bg-slate-200'}`}>
-        <span className={`block h-4 w-4 rounded-full bg-white transition-transform duration-150 ${on ? 'translate-x-5' : ''}`} />
+      <span className={`h-6 w-11 rounded-full p-1 ${on ? 'bg-primary' : 'bg-track'}`}>
+        <span className={`block h-4 w-4 rounded-full bg-card transition-transform duration-150 ${on ? 'translate-x-5' : ''}`} />
       </span>
     </button>
   )

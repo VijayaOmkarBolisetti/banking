@@ -48,7 +48,7 @@ export function AdminCustomersScreen() {
 
   if (!hydrated) {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-3xl bg-white p-10 shadow-sm">
+      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-3xl border border-line/70 bg-card p-10 card-shadow">
         <LottiePlayer name="loading" className="h-32 w-32" />
         <p className="mt-4 text-lg font-bold text-ink">Loading customer data</p>
         <p className="mt-1 text-sm text-muted">Reading saved session from local storage...</p>
@@ -65,7 +65,7 @@ export function AdminCustomersScreen() {
     <div>
       <h1 className="hidden text-2xl font-extrabold text-ink lg:block">Customers</h1>
       <p className="mt-1 hidden text-sm text-muted lg:block">Onboarding status and KYC captured in the customer app.</p>
-      <div className="mt-4 rounded-3xl bg-white p-4 shadow-sm sm:mt-6 sm:p-6">
+      <div className="mt-4 rounded-3xl border border-line/70 bg-card p-4 card-shadow sm:mt-6 sm:p-6">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-lg font-extrabold">{profile.fullName || 'Incomplete profile'}</p>
@@ -73,7 +73,7 @@ export function AdminCustomersScreen() {
           </div>
           <span
             className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${
-              isAuthenticated ? 'bg-emerald-50 text-success' : 'bg-slate-100 text-slate-500'
+              isAuthenticated ? 'bg-success-soft text-success' : 'bg-subtle text-muted'
             }`}
           >
             {statusLabel}
@@ -81,7 +81,7 @@ export function AdminCustomersScreen() {
         </div>
 
         {!hasProfile && !hasKyc && !hasAddress && mobileNumber ? (
-          <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <p className="mt-4 rounded-2xl bg-warning-soft px-4 py-3 text-sm text-amber-800">
             Customer signed in but has not completed profile yet. Finish onboarding in the customer app to see full
             details here.
           </p>

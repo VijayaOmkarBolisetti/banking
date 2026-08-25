@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CreditFlow — Feasibility & Integration Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      @page { size: A4; margin: 0; }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        color: #0f172a;
+        font-size: 10pt;
+        line-height: 1.55;
+        background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        page-break-after: always;
+        position: relative;
+        overflow: hidden;
+      }
+      .page:last-child { page-break-after: auto; }
+
+      /* Cover — same language as first pitch */
+      .cover { background: #1e3a8a; color: #fff; }
+      .cover-inner {
+        min-height: 297mm;
+        padding: 22mm 20mm 24mm;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .cover-blob1 {
+        position: absolute; top: -40mm; right: -30mm;
+        width: 120mm; height: 120mm; border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+      }
+      .cover-blob2 {
+        position: absolute; bottom: 30mm; left: -20mm;
+        width: 70mm; height: 70mm; border-radius: 50%;
+        background: rgba(96,165,250,0.12);
+      }
+      .cover-top {
+        position: relative; z-index: 1;
+        font-size: 18pt; font-weight: 800; letter-spacing: -0.02em;
+      }
+      .cover-body {
+        flex: 1; display: flex; flex-direction: column;
+        justify-content: center; position: relative; z-index: 1;
+        padding: 16mm 0;
+      }
+      .cover-meta {
+        font-size: 8pt; font-weight: 700; letter-spacing: 0.18em;
+        text-transform: uppercase; color: #93c5fd; margin-bottom: 14px;
+      }
+      .cover h1 {
+        font-size: 30pt; font-weight: 800; line-height: 1.1;
+        letter-spacing: -0.035em; max-width: 96%;
+      }
+      .cover-sub {
+        margin-top: 16px; font-size: 11.5pt; color: #bfdbfe;
+        max-width: 90%; line-height: 1.6;
+      }
+      .cover-tags { display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+      .cover-tag {
+        font-size: 8.5pt; font-weight: 600; padding: 7px 14px;
+        border-radius: 999px; background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.18);
+      }
+      .cover-footer {
+        position: relative; z-index: 1;
+        font-size: 8.5pt; color: #93c5fd;
+        border-top: 1px solid rgba(255,255,255,0.15);
+        padding-top: 12px;
+      }
+
+      /* Content pages */
+      .content { padding: 16mm 18mm 20mm; }
+      .page-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding-bottom: 10px; margin-bottom: 16px;
+        border-bottom: 2px solid #eef2ff;
+      }
+      .page-head .brand { font-weight: 800; font-size: 10pt; color: #3b5bdb; }
+      .page-head .pg { font-size: 8pt; color: #94a3b8; font-weight: 600; }
+
+      .section-label {
+        display: inline-block; font-size: 7.5pt; font-weight: 700;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        color: #3b5bdb; background: #eef2ff;
+        padding: 4px 10px; border-radius: 999px; margin-bottom: 8px;
+      }
+      h2 {
+        font-size: 17pt; font-weight: 800; letter-spacing: -0.03em;
+        color: #0f172a; margin-bottom: 6px; line-height: 1.2;
+      }
+      h3 { font-size: 10pt; font-weight: 700; color: #0f172a; }
+      .lead { font-size: 10pt; color: #64748b; margin-bottom: 16px; max-width: 95%; }
+
+      .demo-box {
+        display: flex; align-items: center; gap: 10px;
+        background: #f0fdf4; border: 1px solid #bbf7d0;
+        border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+      }
+      .demo-box .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
+      .demo-box span { font-size: 9pt; color: #166534; font-weight: 600; }
+
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .feat {
+        background: #fff; border: 1px solid #e2e8f0;
+        border-radius: 14px; padding: 14px 14px 12px;
+      }
+      .feat-num {
+        width: 26px; height: 26px; border-radius: 8px;
+        background: #3b5bdb; color: #fff;
+        font-size: 8pt; font-weight: 800;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 8px;
+      }
+      .feat h3 { font-size: 10pt; margin-bottom: 4px; }
+      .feat p { font-size: 8.5pt; color: #64748b; line-height: 1.5; }
+      .feat-blue { border-top: 3px solid #3b5bdb; }
+      .feat-green { border-top: 3px solid #10b981; }
+      .feat-amber { border-top: 3px solid #f59e0b; }
+      .feat-violet { border-top: 3px solid #8b5cf6; }
+
+      .callout {
+        margin-top: 16px; padding: 14px 16px;
+        background: #eef2ff; border-radius: 12px;
+        border-left: 4px solid #3b5bdb;
+      }
+      .callout p { font-size: 9.5pt; font-weight: 600; color: #1e293b; line-height: 1.5; }
+
+      table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 4px; font-size: 8.5pt; }
+      thead th {
+        background: #1e3a8a; color: #fff; font-size: 7.5pt;
+        font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+        padding: 8px 11px; text-align: left;
+      }
+      thead th:first-child { border-radius: 8px 0 0 0; }
+      thead th:last-child { border-radius: 0 8px 0 0; }
+      tbody td {
+        padding: 8px 11px; border-bottom: 1px solid #e2e8f0;
+        color: #475569; vertical-align: top;
+      }
+      tbody tr:nth-child(even) td { background: #f8fafc; }
+      tbody tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+      tbody tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+      tbody td strong { color: #0f172a; }
+
+      .badge {
+        display: inline-block; font-size: 7.5pt; font-weight: 700;
+        padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+      }
+      .b-live { background: #dcfce7; color: #166534; }
+      .b-yes  { background: #dbeafe; color: #1e40af; }
+      .b-need { background: #fef3c7; color: #92400e; }
+      .b-reg  { background: #ede9fe; color: #5b21b6; }
+
+      .phase {
+        margin-bottom: 10px; border: 1px solid #e2e8f0;
+        border-radius: 12px; overflow: hidden;
+      }
+      .phase-head {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px; background: #f8fafc;
+        border-bottom: 1px solid #eef2ff;
+      }
+      .phase-num {
+        width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+        color: #fff; font-size: 8.5pt; font-weight: 800;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .n-now { background: #10b981; }
+      .n-1 { background: #3b5bdb; }
+      .n-2 { background: #0ea5e9; }
+      .n-3 { background: #f59e0b; }
+      .n-4 { background: #8b5cf6; }
+      .phase-head h3 { margin: 0; font-size: 10pt; }
+      .phase-head .timeline {
+        margin-left: auto; font-size: 8pt; color: #3b5bdb;
+        font-weight: 700; white-space: nowrap;
+        background: #eef2ff; padding: 4px 10px; border-radius: 999px;
+      }
+      .phase-body { padding: 9px 14px; }
+      .phase-body p { font-size: 8.5pt; color: #64748b; }
+
+      .dep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+      .dep-card {
+        border: 1px solid #e2e8f0; border-radius: 12px;
+        padding: 12px 13px; background: #fff;
+      }
+      .dep-card.d-blue { border-top: 3px solid #3b5bdb; }
+      .dep-card.d-green { border-top: 3px solid #10b981; }
+      .dep-card.d-amber { border-top: 3px solid #f59e0b; }
+      .dep-card.d-violet { border-top: 3px solid #8b5cf6; }
+      .dep-card h3 {
+        font-size: 9.5pt; margin-bottom: 8px; padding-bottom: 6px;
+        border-bottom: 1px solid #eef2ff;
+      }
+      .dep-card ul { list-style: none; }
+      .dep-card ul li {
+        font-size: 8.5pt; color: #64748b; padding: 5px 0 5px 14px;
+        position: relative;
+      }
+      .dep-card ul li::before {
+        content: ""; position: absolute; left: 0; top: 11px;
+        width: 6px; height: 6px; border-radius: 50%; background: #3b5bdb;
+      }
+
+      .checklist { list-style: none; margin-top: 6px; }
+      .checklist li {
+        display: flex; gap: 10px; align-items: flex-start;
+        padding: 7px 0; border-bottom: 1px solid #f1f5f9;
+        font-size: 9.5pt; color: #334155;
+      }
+      .checklist li:last-child { border-bottom: none; }
+      .check-box {
+        width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
+        border: 2px solid #93c5fd; margin-top: 2px;
+      }
+
+      .closing {
+        margin-top: 16px; padding: 16px 18px;
+        background: #1e3a8a; border-radius: 14px; color: #fff;
+      }
+      .closing h3 { font-size: 10pt; color: #93c5fd; margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+      .closing p { font-size: 10pt; font-weight: 600; color: #dbeafe; line-height: 1.55; }
+
+      .note { font-size: 8pt; color: #94a3b8; margin-top: 10px; }
+
+      .page-foot {
+        position: absolute; bottom: 12mm; left: 18mm; right: 18mm;
+        font-size: 7.5pt; color: #94a3b8;
+        border-top: 1px solid #f1f5f9; padding-top: 8px;
+        display: flex; justify-content: space-between;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- PAGE 1: Cover -->
+    <div class="page cover">
+      <div class="cover-inner">
+        <div class="cover-blob1"></div>
+        <div class="cover-blob2"></div>
+        <div class="cover-top">CreditFlow</div>
+        <div class="cover-body">
+          <div class="cover-meta">Feasibility &amp; Integration Report · August 2026</div>
+          <h1>What is possible.<br>What it takes.<br>What comes next.</h1>
+          <p class="cover-sub">A clear breakdown of every proposed feature — technical feasibility, vendor or regulatory approvals, realistic timelines, and the decisions needed to proceed.</p>
+          <div class="cover-tags">
+            <span class="cover-tag">Development stage</span>
+            <span class="cover-tag">Demo ready</span>
+            <span class="cover-tag">Integrations next</span>
+          </div>
+        </div>
+        <div class="cover-footer">Confidential · For client review only</div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: Already built -->
+    <div class="page content">
+      <div class="page-head">
+        <span class="brand">CreditFlow</span>
+        <span class="pg">02</span>
+      </div>
+      <div class="section-label">Current status</div>
+      <h2>What is already built</h2>
+      <p class="lead">These features are live in the demo today. No vendor contracts or regulatory steps are needed to walk a client through them.</p>
+      <div class="demo-box">
+        <div class="dot"></div>
+        <span>Live demo → banking-flax-three.vercel.app</span>
+      </div>
+      <div class="grid2">
+        <div class="feat feat-blue">
+          <div class="feat-num">01</div>
+          <h3>Customer onboarding</h3>
+          <p>OTP login, profile, PAN, address, bank and consent — full journey, already clickable.</p>
+        </div>
+        <div class="feat feat-green">
+          <div class="feat-num">02</div>
+          <h3>Revolving credit line</h3>
+          <p>Total, available, used and utilisation. Draw again within the same limit.</p>
+        </div>
+        <div class="feat feat-amber">
+          <div class="feat-num">03</div>
+          <h3>Instant quote &amp; EMI</h3>
+          <p>Amount and tenure slider. EMI, fees and GST update live. Pay via UPI, card or net banking.</p>
+        </div>
+        <div class="feat feat-violet">
+          <div class="feat-num">04</div>
+          <h3>Lender admin</h3>
+          <p>Change limit, rate, fees and tenures without a code release. Full operations log.</p>
+        </div>
+      </div>
+      <table style="margin-top:16px">
+        <thead><tr><th>Feature</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Customer onboarding</strong></td><td><span class="badge b-live">Live in demo</span></td><td>OTP, profile, PAN, address, bank, consent</td></tr>
+          <tr><td><strong>Credit line &amp; quote</strong></td><td><span class="badge b-live">Live in demo</span></td><td>Limit, utilisation, EMI, fees, GST</td></tr>
+          <tr><td><strong>EMI payment flow</strong></td><td><span class="badge b-live">Live in demo</span></td><td>UPI / card / net banking (mock, UI complete)</td></tr>
+          <tr><td><strong>Lender admin &amp; log</strong></td><td><span class="badge b-live">Live in demo</span></td><td>Rates, fees, tenures, audit trail</td></tr>
+          <tr><td><strong>Mobile and desktop web</strong></td><td><span class="badge b-live">Live in demo</span></td><td>Responsive — phone and laptop</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <p>The customer experience and lender controls are already designed. Live KYC, bureau and payment rails plug into these same screens — no rebuild required.</p>
+      </div>
+      <div class="page-foot"><span>CreditFlow · Feasibility &amp; Integration Report</span><span>Page 2 of 5</span></div>
+    </div>
+
+    <!-- PAGE 3: Feasibility table -->
+    <div class="page content">
+      <div class="page-head">
+        <span class="brand">CreditFlow</span>
+        <span class="pg">03</span>
+      </div>
+      <div class="section-label">Feature-by-feature analysis</div>
+      <h2>Is every feature possible?</h2>
+      <p class="lead">Every feature in the pitch is technically feasible and used in live Indian lending products today. The table explains what is needed beyond code.</p>
+      <table>
+        <thead><tr><th>Feature</th><th>Feasibility</th><th>What is needed beyond code</th></tr></thead>
+        <tbody>
+          <tr><td><strong>DigiLocker PAN + Aadhaar</strong></td><td><span class="badge b-yes">Yes</span></td><td>KYC vendor (Setu, HyperVerge, Signzy) + DigiLocker partner onboarding</td></tr>
+          <tr><td><strong>Selfie and document upload</strong></td><td><span class="badge b-yes">Yes</span></td><td>Camera consent already built. Liveness SDK via same KYC vendor</td></tr>
+          <tr><td><strong>Accept and validate</strong></td><td><span class="badge b-yes">Yes</span></td><td>Review screen already designed. Name match + photo quality via API</td></tr>
+          <tr><td><strong>CIBIL / Experian / CRIF</strong></td><td><span class="badge b-need">Needs approval</span></td><td>Bureau membership or aggregator. Requires NBFC or regulated entity</td></tr>
+          <tr><td><strong>Approve / reject rules engine</strong></td><td><span class="badge b-yes">Yes</span></td><td>Custom rules once bureau and income data are available</td></tr>
+          <tr><td><strong>Penny-drop (₹1 IMPS)</strong></td><td><span class="badge b-yes">Yes</span></td><td>Razorpay, Cashfree, Setu, or bank API</td></tr>
+          <tr><td><strong>eSign on loan agreement</strong></td><td><span class="badge b-yes">Yes</span></td><td>Aadhaar eSign via Leegality, SignDesk, or NSDL</td></tr>
+          <tr><td><strong>UPI Autopay / eNACH</strong></td><td><span class="badge b-yes">Yes</span></td><td>Razorpay / Cashfree / PayU mandate flow</td></tr>
+          <tr><td><strong>Live disbursal (IMPS / NEFT)</strong></td><td><span class="badge b-need">Needs approval</span></td><td>Payment gateway + verified account. Lending entity required</td></tr>
+          <tr><td><strong>WhatsApp / SMS reminders</strong></td><td><span class="badge b-yes">Yes</span></td><td>Gupshup, Twilio, or MSG91</td></tr>
+          <tr><td><strong>Collections and DPD dashboard</strong></td><td><span class="badge b-yes">Yes</span></td><td>Admin screen and rules. No special license</td></tr>
+          <tr><td><strong>White-label (brand, domain)</strong></td><td><span class="badge b-yes">Yes</span></td><td>Config change and DNS. Already aligned with architecture</td></tr>
+          <tr><td><strong>MIS and board reports</strong></td><td><span class="badge b-yes">Yes</span></td><td>Admin export and BI layer</td></tr>
+          <tr><td><strong>Real lending and credit book</strong></td><td><span class="badge b-reg">Regulatory</span></td><td>Client must be or partner with an NBFC or RBI-regulated lender</td></tr>
+        </tbody>
+      </table>
+      <div class="page-foot"><span>CreditFlow · Feasibility &amp; Integration Report</span><span>Page 3 of 5</span></div>
+    </div>
+
+    <!-- PAGE 4: Phases -->
+    <div class="page content">
+      <div class="page-head">
+        <span class="brand">CreditFlow</span>
+        <span class="pg">04</span>
+      </div>
+      <div class="section-label">Delivery plan</div>
+      <h2>Realistic phases and timelines</h2>
+      <p class="lead">Timelines start from the date vendor contracts and API access are confirmed — not from today. Phases can run in parallel where dependencies allow.</p>
+
+      <div class="phase">
+        <div class="phase-head">
+          <div class="phase-num n-now">✓</div>
+          <h3>Now — Demo ready</h3>
+          <span class="timeline">Live today</span>
+        </div>
+        <div class="phase-body"><p>Full customer app, revolving credit line, EMI payment, and lender admin controls. Available at banking-flax-three.vercel.app.</p></div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <div class="phase-num n-1">1</div>
+          <h3>Phase 1 — DigiLocker KYC, photos, accept and validate</h3>
+          <span class="timeline">4 – 8 weeks</span>
+        </div>
+        <div class="phase-body"><p>DigiLocker PAN and Aadhaar fetch, selfie and document photo upload, review and accept screen, system validation. Vendor: Setu / HyperVerge / Signzy.</p></div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <div class="phase-num n-2">2</div>
+          <h3>Phase 2 — Penny-drop, eSign, UPI Autopay</h3>
+          <span class="timeline">3 – 6 weeks</span>
+        </div>
+        <div class="phase-body"><p>₹1 IMPS bank verification, Aadhaar eSign on the loan agreement, UPI Autopay or eNACH mandate. Vendor: Razorpay or Cashfree, and Leegality or SignDesk.</p></div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <div class="phase-num n-3">3</div>
+          <h3>Phase 3 — Bureau, rules engine, live disbursal</h3>
+          <span class="timeline">6 – 10 weeks</span>
+        </div>
+        <div class="phase-body"><p>CIBIL / Experian / CRIF pull, custom approve / reject / refer rules, live IMPS or NEFT disbursal. Requires an NBFC entity or co-lending partner first.</p></div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head">
+          <div class="phase-num n-4">4</div>
+          <h3>Phase 4 — Collections, WhatsApp, white-label, MIS</h3>
+          <span class="timeline">4 – 6 weeks</span>
+        </div>
+        <div class="phase-body"><p>DPD dashboard, overdue auto-block, WhatsApp and SMS reminders, white-label brand and domain, board MIS and export reports.</p></div>
+      </div>
+
+      <p class="note">* Estimates from the date API access and vendor contracts are signed. Bureau and disbursal depend on NBFC or regulatory approval secured independently by the client.</p>
+      <div class="page-foot"><span>CreditFlow · Feasibility &amp; Integration Report</span><span>Page 4 of 5</span></div>
+    </div>
+
+    <!-- PAGE 5: Dependencies + close -->
+    <div class="page content">
+      <div class="page-head">
+        <span class="brand">CreditFlow</span>
+        <span class="pg">05</span>
+      </div>
+      <div class="section-label">Client-side dependencies</div>
+      <h2>What we need from you</h2>
+      <p class="lead">These decisions sit on the client side. The sooner each is confirmed, the sooner the matching phase can go live.</p>
+
+      <div class="dep-grid">
+        <div class="dep-card d-blue">
+          <h3>Regulatory and legal</h3>
+          <ul>
+            <li>NBFC license or co-lending partner for real credit</li>
+            <li>Loan agreement template and privacy policy</li>
+            <li>KYC and data processing policy (RBI guidelines)</li>
+          </ul>
+        </div>
+        <div class="dep-card d-green">
+          <h3>KYC vendor</h3>
+          <ul>
+            <li>DigiLocker partner onboarding (MeitY / UIDAI)</li>
+            <li>Confirm: PAN + Aadhaar both required, or PAN only</li>
+            <li>Photo rules: selfie only, or selfie and document image</li>
+          </ul>
+        </div>
+        <div class="dep-card d-amber">
+          <h3>Bureau access</h3>
+          <ul>
+            <li>CIBIL / Experian / CRIF membership or aggregator</li>
+            <li>Regulated entity credentials required for bureau pull</li>
+            <li>Confirm which bureau or bureaus are required</li>
+          </ul>
+        </div>
+        <div class="dep-card d-violet">
+          <h3>Payments</h3>
+          <ul>
+            <li>Payment gateway account (Razorpay / Cashfree / PayU)</li>
+            <li>eSign vendor (Leegality / SignDesk / NSDL)</li>
+            <li>Bank account for IMPS and NEFT disbursal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-label">This meeting</div>
+      <h2 style="font-size:13pt;margin-bottom:8px">Decisions needed</h2>
+      <ul class="checklist">
+        <li><div class="check-box"></div>DigiLocker — Aadhaar mandatory, or optional alongside PAN</li>
+        <li><div class="check-box"></div>Failed KYC — auto-reject or manual review by ops in admin</li>
+        <li><div class="check-box"></div>White-label branding (brand colours, domain)</li>
+        <li><div class="check-box"></div>Target go-live date for Phase 1</li>
+        <li><div class="check-box"></div>NBFC partner name or own license status</li>
+      </ul>
+
+      <div class="closing">
+        <h3>Bottom line</h3>
+        <p>Every feature in the pitch is technically feasible and used in live Indian lending products today. The demo proves the experience works end to end. Live rails plug into the same screens once vendor contracts and approvals are in place. Nothing needs to be rebuilt.</p>
+      </div>
+
+      <div class="page-foot"><span>CreditFlow · Feasibility &amp; Integration Report · banking-flax-three.vercel.app</span><span>Page 5 of 5</span></div>
+    </div>
+
+  </body>
+</html>

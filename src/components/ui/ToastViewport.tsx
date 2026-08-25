@@ -22,7 +22,7 @@ export function ToastViewport() {
               key={toast.id}
               type="button"
               onClick={() => dismissToast(toast.id)}
-              className="pointer-events-auto flex w-full items-center gap-3 rounded-2xl bg-ink px-4 py-3 text-left text-sm font-medium text-white shadow-lg"
+              className="pointer-events-auto flex w-full items-center gap-3 rounded-2xl bg-inverse px-4 py-3 text-left text-sm font-medium text-inverse-ink shadow-lg"
               initial={{ opacity: 0, transform: 'translateY(-12px) scale(0.97)' }}
               animate={{ opacity: 1, transform: 'translateY(0px) scale(1)' }}
               exit={{ opacity: 0, transform: 'translateY(-8px) scale(0.97)' }}

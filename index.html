@@ -12,6 +12,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <script>
+      // Apply the saved theme before first paint so dark-mode users never see
+      // a white flash. Mirrors applyTheme() in src/store/useThemeStore.ts.
+      (function () {
+        var mode = 'light'
+        try {
+          var saved = JSON.parse(localStorage.getItem('creditflow-theme') || '{}').state || {}
+          // Light and dark only — always stamp one, matching useThemeStore.
+          if (saved.mode === 'dark') mode = 'dark'
+          if (saved.accent) {
+            document.documentElement.style.setProperty('--c-accent', saved.accent)
+          }
+        } catch (e) {
+          /* first visit, or storage blocked — fall back to light */
+        }
+        document.documentElement.setAttribute('data-theme', mode)
+      })()
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

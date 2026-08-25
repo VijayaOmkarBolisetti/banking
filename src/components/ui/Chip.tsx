@@ -6,10 +6,10 @@ interface ChipProps {
 }
 
 const tones = {
-  neutral: 'bg-slate-100 text-slate-600',
-  success: 'bg-emerald-50 text-success',
-  warning: 'bg-amber-50 text-warning',
-  danger: 'bg-red-50 text-danger',
+  neutral: 'bg-subtle text-muted',
+  success: 'bg-success-soft text-success',
+  warning: 'bg-warning-soft text-warning',
+  danger: 'bg-danger-soft text-danger',
   info: 'bg-primary-soft text-primary',
 }
 

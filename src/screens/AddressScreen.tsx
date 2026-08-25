@@ -16,7 +16,6 @@ export function AddressScreen() {
   const setAddress = useAppStore((state) => state.setAddress)
   const setCurrentStep = useAppStore((state) => state.setCurrentStep)
   const [form, setForm] = useState<AddressDetails>(address)
-  const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
   function update<K extends keyof AddressDetails>(key: K, value: AddressDetails[K]) {
@@ -37,11 +36,9 @@ export function AddressScreen() {
     setLoading(true)
     const result = await profileService.saveAddress(form)
     setLoading(false)
-    if (!result.success) {
-      setErrors(result.errors ?? {})
-      return
-    }
-    setAddress(form)
+    const saved = result.address ?? form
+    setForm(saved)
+    setAddress(saved)
     setCurrentStep('bank')
     navigate(ROUTES.BANK)
   }
@@ -63,7 +60,6 @@ export function AddressScreen() {
           inputMode="numeric"
           maxLength={6}
           value={form.pinCode}
-          error={errors.pinCode}
           onChange={(event) => handlePin(event.target.value.replace(/\D/g, '').slice(0, 6))}
           placeholder="560038"
           hint="City and state fill automatically for common PIN codes"
@@ -71,32 +67,27 @@ export function AddressScreen() {
         <Input
           label="House / Flat number"
           value={form.houseNumber}
-          error={errors.houseNumber}
           onChange={(event) => update('houseNumber', event.target.value)}
         />
         <Input
           label="Street / Area"
           value={form.street}
-          error={errors.street}
           onChange={(event) => update('street', event.target.value)}
         />
         <Input
           label="City"
           value={form.city}
-          error={errors.city}
           onChange={(event) => update('city', event.target.value)}
         />
         <Input
           label="State"
           value={form.state}
-          error={errors.state}
           onChange={(event) => update('state', event.target.value)}
         />
         <Select
           label="Residential status"
           options={RESIDENTIAL_OPTIONS}
           value={form.residentialStatus}
-          error={errors.residentialStatus}
           onChange={(event) => update('residentialStatus', event.target.value as ResidentialStatus)}
         />
       </div>

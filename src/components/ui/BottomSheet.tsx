@@ -24,13 +24,13 @@ export function BottomSheet({ open, onClose, title, children }: BottomSheetProps
             onClick={onClose}
           />
           <motion.div
-            className="absolute right-0 bottom-0 left-0 max-h-[82%] overflow-auto rounded-t-[28px] bg-white p-5 shadow-[0_-12px_40px_rgb(15_23_42_/_0.18)]"
+            className="absolute right-0 bottom-0 left-0 max-h-[82%] overflow-auto rounded-t-[28px] bg-card p-5 shadow-[var(--c-shadow-lift)]"
             initial={{ transform: 'translateY(100%)' }}
             animate={{ transform: 'translateY(0%)' }}
             exit={{ transform: 'translateY(100%)' }}
             transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
           >
-            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200" />
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-track" />
             {title ? <h3 className="mb-4 text-lg font-bold text-ink">{title}</h3> : null}
             {children}
           </motion.div>

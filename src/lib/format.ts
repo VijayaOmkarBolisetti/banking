@@ -5,12 +5,18 @@ export function formatInr(amount: number, withSymbol = true): string {
   return withSymbol ? `₹${formatted}` : formatted
 }
 
-export function formatInrCompact(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(Math.round(amount))
+/** ₹3.5L / ₹1.2Cr — the Indian short forms, for headline figures. */
+export function formatInrShort(amount: number): string {
+  const value = Math.round(Math.abs(amount))
+  const sign = amount < 0 ? '-' : ''
+  if (value >= 10_000_000) return `${sign}₹${trimZero(value / 10_000_000)}Cr`
+  if (value >= 100_000) return `${sign}₹${trimZero(value / 100_000)}L`
+  if (value >= 1_000) return `${sign}₹${trimZero(value / 1_000)}K`
+  return `${sign}₹${value}`
+}
+
+function trimZero(value: number): string {
+  return value.toFixed(value < 10 ? 2 : 1).replace(/\.?0+$/, '')
 }
 
 export function formatDate(isoDate: string, style: 'long' | 'medium' | 'short' = 'long'): string {

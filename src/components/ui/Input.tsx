@@ -24,21 +24,21 @@ export function Input({
 
   return (
     <label className="block" htmlFor={inputId}>
-      <span className="mb-1.5 block text-sm font-medium text-slate-600">{label}</span>
+      <span className="mb-1.5 block text-sm font-medium text-muted">{label}</span>
       <div
-        className={`flex items-center gap-2 rounded-2xl border bg-white px-3.5 transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        className={`flex items-center gap-2 rounded-2xl border bg-card px-3.5 transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] ${
           error
-            ? 'border-red-300 shadow-[0_0_0_4px_rgb(254_226_226)]'
-            : 'border-line focus-within:border-primary focus-within:shadow-[0_0_0_4px_rgb(238_242_255)]'
+            ? 'border-danger/60 shadow-[0_0_0_4px_var(--c-danger-soft)]'
+            : 'border-line focus-within:border-primary focus-within:shadow-[0_0_0_4px_var(--c-primary-ring)]'
         } ${className}`}
       >
-        {prefix ? <span className="shrink-0 text-sm font-semibold text-slate-500">{prefix}</span> : null}
+        {prefix ? <span className="shrink-0 text-sm font-semibold text-muted">{prefix}</span> : null}
         <input
           id={inputId}
-          className="h-12 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-slate-400"
+          className="h-12 w-full bg-transparent text-[15px] text-ink outline-none placeholder:text-faint"
           {...props}
         />
-        {suffix ? <span className="shrink-0 text-slate-400">{suffix}</span> : null}
+        {suffix ? <span className="shrink-0 text-faint">{suffix}</span> : null}
       </div>
       {error ? <p className="mt-1.5 text-xs font-medium text-danger">{error}</p> : null}
       {!error && hint ? <p className="mt-1.5 text-xs text-muted">{hint}</p> : null}

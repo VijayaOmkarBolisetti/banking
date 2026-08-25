@@ -34,7 +34,7 @@ export function TransactionsScreen() {
             type="button"
             onClick={() => setFilter(item.id)}
             className={`pressable rounded-full px-3.5 py-2 text-sm font-semibold whitespace-nowrap ${
-              filter === item.id ? 'bg-primary text-white' : 'bg-white text-slate-600'
+              filter === item.id ? 'bg-primary text-white' : 'bg-card text-muted'
             }`}
           >
             {item.label}
@@ -47,10 +47,10 @@ export function TransactionsScreen() {
             <div
               className={`flex h-11 w-11 items-center justify-center rounded-2xl ${
                 txn.type === 'credit'
-                  ? 'bg-emerald-50 text-success'
+                  ? 'bg-success-soft text-success'
                   : txn.type === 'charge'
-                    ? 'bg-amber-50 text-warning'
-                    : 'bg-red-50 text-danger'
+                    ? 'bg-warning-soft text-warning'
+                    : 'bg-danger-soft text-danger'
               }`}
             >
               {txn.type === 'credit' ? (

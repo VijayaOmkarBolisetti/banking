@@ -1,43 +1,38 @@
-import type { ActiveLoan, PaymentMethod, Transaction } from '../types'
+import type { ActiveLoan, EmiInstallment, PaymentMethod, Transaction } from '../types'
 import { createId, simulateDelay } from './delay'
 
 export interface PaymentResult {
   success: boolean
   message: string
-  loan?: ActiveLoan
+  emi?: EmiInstallment
   transaction?: Transaction
 }
 
+const METHOD_LABELS: Record<PaymentMethod, string> = {
+  upi: 'UPI',
+  debit_card: 'Debit Card',
+  net_banking: 'Net Banking',
+}
+
 export const paymentService = {
-  async payNextEmi(loan: ActiveLoan, method: PaymentMethod): Promise<PaymentResult> {
-    const next = loan.emis.find((emi) => emi.status === 'upcoming' || emi.status === 'overdue')
-    if (!next) {
-      return { success: false, message: 'No EMI is due right now' }
+  /** Settles one specific instalment; the store applies it and releases credit. */
+  async payEmi(loan: ActiveLoan, emi: EmiInstallment, method: PaymentMethod): Promise<PaymentResult> {
+    if (emi.status === 'paid') {
+      return { success: false, message: 'This EMI is already paid' }
     }
 
     await simulateDelay(1400)
 
-    const updatedEmis = loan.emis.map((emi) =>
-      emi.id === next.id ? { ...emi, status: 'paid' as const } : emi,
-    )
-
-    const methodLabel =
-      method === 'upi' ? 'UPI' : method === 'debit_card' ? 'Debit Card' : 'Net Banking'
-
     const transaction: Transaction = {
       id: createId('txn'),
-      title: `EMI Payment · ${methodLabel}`,
-      date: next.dueDate,
-      amount: -next.amount,
+      title: `EMI ${emi.number} · ${METHOD_LABELS[method]}`,
+      date: emi.dueDate,
+      amount: -emi.amount,
       type: 'payment',
       status: 'success',
+      loanId: loan.id,
     }
 
-    return {
-      success: true,
-      message: 'Payment successful',
-      loan: { ...loan, emis: updatedEmis },
-      transaction,
-    }
+    return { success: true, message: 'Payment successful', emi, transaction }
   },
 }

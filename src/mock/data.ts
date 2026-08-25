@@ -1,16 +1,24 @@
 import type {
   AddressDetails,
   BankDetails,
+  CreditScoreState,
   ConsentState,
   CreditAccount,
+  LoanApplication,
   PanDetails,
   Transaction,
   UserProfile,
 } from '../types'
+import { ENTRY_LIMIT } from '../lib/creditScore'
 
 export const APP_NAME = 'CreditFlow'
-export const APP_TAGLINE = 'Smart credit, when you need it'
-export const CREDIT_LIMIT = 50000
+export const APP_TAGLINE = 'Every loan you need, one app'
+/** Ceiling an excellent bureau score unlocks; everyone starts far below it. */
+export const MAX_CREDIT_LIMIT = 500000
+
+export const SUPPORT_PHONE = '1800-200-4567'
+export const SUPPORT_EMAIL = 'support@creditflow.app'
+export const SUPPORT_HOURS = 'Mon–Sat, 9:00am – 7:00pm IST'
 
 export const DEFAULT_PROFILE: UserProfile = {
   fullName: '',
@@ -52,33 +60,101 @@ export const DEFAULT_CONSENT: ConsentState = {
 }
 
 export const DEFAULT_CREDIT: CreditAccount = {
-  limit: CREDIT_LIMIT,
+  limit: ENTRY_LIMIT,
   used: 0,
-  available: CREDIT_LIMIT,
-  interestRate: 18,
+  available: ENTRY_LIMIT,
+  interestRate: 14.5,
+}
+
+export const DEFAULT_CREDIT_SCORE: CreditScoreState = { score: 0, checkedAt: null }
+
+export const DEFAULT_APPLICATION: LoanApplication = {
+  productId: null,
+  property: {
+    propertyType: '',
+    propertyValue: '',
+    downPayment: '',
+    city: '',
+    builderName: '',
+  },
+  business: {
+    businessName: '',
+    businessType: '',
+    gstNumber: '',
+    annualTurnover: '',
+    yearsInOperation: '',
+  },
+  collateral: {
+    collateralType: '',
+    description: '',
+    estimatedValue: '',
+    purity: '',
+    registrationNumber: '',
+  },
 }
 
 export const DEMO_USER_NAME = 'Vijay Sharma'
 export const DEMO_MOBILE = '9876543210'
 
+/**
+ * Realistic stand-in data. Used to seed demo routes and, via `lib/demoFill`,
+ * to fill any field a presenter leaves blank so no form ever blocks.
+ */
+export const DEMO_PROFILE: UserProfile = {
+  fullName: DEMO_USER_NAME,
+  dateOfBirth: '1996-04-12',
+  gender: 'male',
+  email: 'vijay.sharma@email.com',
+  employmentType: 'salaried',
+  monthlyIncome: 85000,
+}
+
+export const DEMO_PAN: PanDetails = {
+  panNumber: 'ABCDE1234F',
+  verified: true,
+  holderName: DEMO_USER_NAME.toUpperCase(),
+}
+
+export const DEMO_ADDRESS: AddressDetails = {
+  pinCode: '560038',
+  houseNumber: '12A',
+  street: 'Indiranagar 100 Feet Road',
+  city: 'Bengaluru',
+  state: 'Karnataka',
+  residentialStatus: 'rented',
+}
+
+export const DEMO_BANK: BankDetails = {
+  accountHolderName: DEMO_USER_NAME,
+  bankName: 'HDFC Bank',
+  accountNumber: '501001234567',
+  ifscCode: 'HDFC0001234',
+  verified: true,
+}
+
+export const DEMO_CONSENT: ConsentState = {
+  notifications: 'granted',
+  location: 'granted',
+  camera: 'granted',
+  termsAccepted: true,
+}
+
 export const ONBOARDING_SLIDES = [
   {
-    id: 'credit',
-    title: 'Credit when you need it',
-    description: 'Get access to flexible credit in just a few steps.',
-    accent: 'from-indigo-500 to-blue-500',
+    id: 'instant',
+    title: 'Money in 60 seconds',
+    description:
+      'Instant, personal, home, business or gold — five loans, one application, no paperwork.',
   },
   {
     id: 'transparent',
     title: 'Simple and transparent',
-    description: 'Know your repayment amount before you proceed.',
-    accent: 'from-violet-500 to-indigo-500',
+    description: 'See your exact EMI, interest and charges before you commit to anything.',
   },
   {
     id: 'manage',
     title: 'Manage everything in one place',
-    description: 'Track credit, repayments and transactions easily.',
-    accent: 'from-blue-500 to-cyan-500',
+    description: 'Track every loan, repayment and transaction, and get answers instantly from Flow.',
   },
 ] as const
 
@@ -100,6 +176,33 @@ export const RESIDENTIAL_OPTIONS = [
   { value: 'owned', label: 'Owned' },
   { value: 'rented', label: 'Rented' },
   { value: 'family_property', label: 'Family property' },
+] as const
+
+export const PROPERTY_TYPE_OPTIONS = [
+  { value: 'apartment', label: 'Apartment' },
+  { value: 'independent_house', label: 'Independent house' },
+  { value: 'plot', label: 'Plot / land' },
+  { value: 'under_construction', label: 'Under construction' },
+] as const
+
+export const BUSINESS_TYPE_OPTIONS = [
+  { value: 'proprietorship', label: 'Proprietorship' },
+  { value: 'partnership', label: 'Partnership' },
+  { value: 'private_limited', label: 'Private limited' },
+  { value: 'llp', label: 'LLP' },
+] as const
+
+export const COLLATERAL_TYPE_OPTIONS = [
+  { value: 'gold', label: 'Gold jewellery' },
+  { value: 'vehicle', label: 'Vehicle' },
+] as const
+
+export const SUPPORT_CATEGORIES = [
+  'Loan application',
+  'EMI & repayment',
+  'KYC & documents',
+  'Disbursal delay',
+  'Something else',
 ] as const
 
 export const PINCODE_DIRECTORY: Record<string, { city: string; state: string }> = {
@@ -124,53 +227,72 @@ export const IFSC_DIRECTORY: Record<string, { bankName: string; branch: string }
   KKBK0000123: { bankName: 'Kotak Mahindra Bank', branch: 'Whitefield' },
 }
 
-export const BANK_NAMES = [
-  'HDFC Bank',
-  'State Bank of India',
-  'ICICI Bank',
-  'Axis Bank',
-  'Kotak Mahindra Bank',
-  'Bank of Baroda',
-  'Punjab National Bank',
-]
-
 export const SAMPLE_TRANSACTIONS: Transaction[] = [
   {
-    id: 'txn-disbursal',
-    title: 'Credit Disbursal',
-    date: '2026-08-18',
-    amount: 19412,
+    id: 'txn-seed-disbursal',
+    title: 'Personal Loan disbursal',
+    date: '2026-06-18',
+    amount: 97_640,
     type: 'credit',
     status: 'success',
   },
   {
-    id: 'txn-fee',
-    title: 'Processing Fee',
-    date: '2026-08-18',
-    amount: -499,
+    id: 'txn-seed-fee',
+    title: 'Processing fee & GST',
+    date: '2026-06-18',
+    amount: -2_360,
     type: 'charge',
     status: 'success',
   },
   {
-    id: 'txn-emi-1',
-    title: 'EMI Payment',
-    date: '2026-09-05',
-    amount: -3650,
+    id: 'txn-seed-emi-1',
+    title: 'EMI Payment · UPI',
+    date: '2026-07-05',
+    amount: -8_992,
     type: 'payment',
-    status: 'pending',
+    status: 'success',
+  },
+  {
+    id: 'txn-seed-emi-2',
+    title: 'EMI Payment · UPI',
+    date: '2026-08-05',
+    amount: -8_992,
+    type: 'payment',
+    status: 'success',
   },
 ]
 
 export const HELP_TOPICS = [
-  { id: 'limit', title: 'How is my credit limit decided?', body: 'Your limit is based on the profile, income and verification details you shared during onboarding.' },
-  { id: 'emi', title: 'When is my EMI due?', body: 'The first EMI is due on 5 September 2026. Later EMIs follow on the 5th of each month.' },
-  { id: 'prepay', title: 'Can I pay early?', body: 'Yes. Use Pay Now to clear the next upcoming EMI any time before the due date.' },
-  { id: 'support', title: 'Need help?', body: 'For account help, write to support@creditflow.app. We typically reply within one business day.' },
+  {
+    id: 'products',
+    title: 'Which loan should I pick?',
+    body: 'Personal loans are unsecured and fastest. Home loans carry the lowest rate but need property papers. Business loans size to your GST turnover. Gold and vehicle loans are secured against an asset you already own.',
+  },
+  {
+    id: 'limit',
+    title: 'How is my credit limit decided?',
+    body: 'Your limit is based on the profile, income and verification details you shared during onboarding.',
+  },
+  {
+    id: 'emi',
+    title: 'When is my EMI due?',
+    body: 'The first EMI falls due on the 5th of the month after disbursal, and every EMI after that on the 5th.',
+  },
+  {
+    id: 'prepay',
+    title: 'Can I pay early?',
+    body: 'Yes. Use Pay Now to clear the next upcoming EMI any time before the due date. Paying an instalment releases that principal back onto your credit limit.',
+  },
+  {
+    id: 'support',
+    title: 'Need a human?',
+    body: `Call ${SUPPORT_PHONE} (${SUPPORT_HOURS}) or write to ${SUPPORT_EMAIL}. You can also raise a ticket from the Support screen.`,
+  },
 ]
 
 export const TERMS_TEXT = `CreditFlow is a UI/UX demonstration product. It does not issue real credit, collect KYC, or move money.
 
-By continuing you acknowledge that all PAN, bank, OTP and eligibility steps are simulated with mock data for client presentation only.`
+By continuing you acknowledge that all PAN, bank, OTP, valuation and eligibility steps are simulated with mock data for client presentation only.`
 
 export const PRIVACY_TEXT = `This demo stores onboarding progress in your browser's localStorage so the presentation can be resumed after refresh.
 
