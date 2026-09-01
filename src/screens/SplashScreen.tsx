@@ -45,7 +45,7 @@ export function SplashScreen() {
         transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
         className="flex flex-col items-center"
       >
-        <div className="rounded-[22px] bg-white p-2 shadow-xl">
+        <div className="rounded-[22px] bg-card p-2 shadow-xl">
           <Logo size={64} />
         </div>
         <h1 className="mt-6 text-3xl font-extrabold tracking-tight">{APP_NAME}</h1>

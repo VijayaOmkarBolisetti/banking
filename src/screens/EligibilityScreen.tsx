@@ -5,8 +5,9 @@ import { Button } from '../components/ui/Button'
 import { LottiePlayer } from '../components/ui/LottiePlayer'
 import { ProcessingSteps } from '../components/ui/ProcessingSteps'
 import { Screen } from '../components/layout/Screen'
-import { eligibilityService } from '../services/eligibilityService'
 import { formatInr } from '../lib/format'
+import { bandFor, limitForScore } from '../lib/creditScore'
+import { ScoreGauge } from '../components/credit/ScoreGauge'
 import { ROUTES } from '../navigation/routes'
 import { useAppStore } from '../store/useAppStore'
 import { useConfigStore } from '../store/useConfigStore'
@@ -19,31 +20,30 @@ const PRE_CHECKS = [
   { label: 'Bank details verified', status: 'done' as const },
 ]
 
-const PROCESS = ['Analyzing profile', 'Checking eligibility', 'Calculating available credit']
+const PROCESS = ['Analysing your profile', 'Fetching your CIBIL score', 'Calculating your limit']
 
 export function EligibilityScreen() {
   const navigate = useNavigate()
-  const profile = useAppStore((state) => state.profile)
-  const setCredit = useAppStore((state) => state.setCredit)
+  const runCreditCheck = useAppStore((state) => state.runCreditCheck)
   const setCurrentStep = useAppStore((state) => state.setCurrentStep)
+  const creditScore = useAppStore((state) => state.creditScore)
+  const credit = useAppStore((state) => state.credit)
   const creditLimit = useConfigStore((state) => state.creditLimit)
   const { steps, done } = useTimedSteps(PROCESS, 850)
 
   useEffect(() => {
     if (!done) return
-    void eligibilityService.calculateEligibility(profile).then((result) => {
-      setCredit({
-        limit: result.limit,
-        used: 0,
-        available: result.available,
-        interestRate: result.interestRate,
-      })
-      setCurrentStep('credit_approved')
-      logOperation('customer', 'eligibility', 'Credit approved', `Limit ${result.limit.toLocaleString('en-IN')}`, {
-        amount: result.limit,
-      })
-    })
-  }, [done, profile, setCredit, setCurrentStep])
+    // The bureau check sets both the score and the limit its band unlocks.
+    const result = runCreditCheck(creditLimit)
+    setCurrentStep('credit_approved')
+    logOperation(
+      'customer',
+      'eligibility',
+      'Credit approved',
+      `CIBIL ${result.score} · limit ₹${limitForScore(result.score, creditLimit).toLocaleString('en-IN')}`,
+      { amount: limitForScore(result.score, creditLimit) },
+    )
+  }, [done, creditLimit, runCreditCheck, setCurrentStep])
 
   return (
     <Screen title="Checking eligibility" subtitle="This usually takes a few seconds.">
@@ -53,10 +53,10 @@ export function EligibilityScreen() {
             <LottiePlayer name="loading" className="h-20 w-20" />
           </div>
         ) : null}
-        <div className="mb-4 rounded-[22px] bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-[22px] border border-line/70 bg-card p-4 card-shadow">
           <ProcessingSteps steps={PRE_CHECKS} />
         </div>
-        <div className="rounded-[22px] bg-white p-4 shadow-sm">
+        <div className="rounded-[22px] border border-line/70 bg-card p-4 card-shadow">
           <p className="mb-3 text-sm font-semibold text-primary">Calculating your credit eligibility...</p>
           <ProcessingSteps steps={steps} />
         </div>
@@ -69,9 +69,14 @@ export function EligibilityScreen() {
             <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary to-[#1d4ed8] p-8 text-white shadow-xl">
               <div className="pointer-events-none absolute -top-6 -right-6 h-24 w-24 rounded-full bg-white/10" />
               <div className="pointer-events-none absolute bottom-4 left-6 h-3 w-3 rounded-full bg-emerald-300" />
-              <p className="text-lg font-semibold text-indigo-100">Congratulations!</p>
-              <p className="mt-2 text-sm text-indigo-100">You are eligible for</p>
-              <p className="mt-2 text-5xl font-extrabold">{formatInr(creditLimit)}</p>
+              <p className="text-sm text-indigo-100">Your CIBIL score</p>
+              <div className="mt-3 flex justify-center">
+                <ScoreGauge score={creditScore.score} size={150} onColor />
+              </div>
+              <p className="mt-4 text-sm text-indigo-100">
+                {bandFor(creditScore.score).label} · pre-approved for
+              </p>
+              <p className="mt-1 text-4xl font-extrabold">{formatInr(credit.limit)}</p>
             </div>
             <div className="mt-6">
               <Button onClick={() => navigate(ROUTES.CREDIT_APPROVED)}>View your credit</Button>

@@ -18,7 +18,6 @@ export function OtpScreen() {
   const currentStep = useAppStore((state) => state.currentStep)
   const showToast = useAppStore((state) => state.showToast)
   const [otp, setOtp] = useState('')
-  const [error, setError] = useState<string | undefined>()
   const [loading, setLoading] = useState(false)
   const [seconds, setSeconds] = useState(30)
   const [success, setSuccess] = useState(false)
@@ -31,12 +30,9 @@ export function OtpScreen() {
 
   async function verify() {
     setLoading(true)
-    const result = await authService.verifyOtp(mobileNumber, otp)
+    // Walkthrough build: any code verifies, so there is no failure branch.
+    await authService.verifyOtp(mobileNumber, otp)
     setLoading(false)
-    if (!result.success) {
-      setError(result.message)
-      return
-    }
     setSuccess(true)
     setAuthenticated(true)
     const next = currentStep === 'complete' ? 'complete' : 'profile'
@@ -60,7 +56,7 @@ export function OtpScreen() {
       onBack={() => navigate(ROUTES.LOGIN)}
       footer={
         success ? null : (
-          <Button onClick={verify} loading={loading} disabled={otp.length !== 6}>
+          <Button onClick={verify} loading={loading}>
             Verify
           </Button>
         )
@@ -83,13 +79,13 @@ export function OtpScreen() {
             </motion.div>
           ) : (
             <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <OtpInput value={otp} onChange={(value) => { setOtp(value); setError(undefined) }} error={error} />
+              <OtpInput value={otp} onChange={setOtp} />
               <div className="mt-6 flex items-center justify-between text-sm">
                 <button
                   type="button"
                   onClick={resend}
                   disabled={seconds > 0}
-                  className="font-semibold text-primary disabled:text-slate-400"
+                  className="font-semibold text-primary disabled:text-faint"
                 >
                   Resend OTP
                 </button>
@@ -98,7 +94,7 @@ export function OtpScreen() {
               <button
                 type="button"
                 onClick={() => navigate(ROUTES.LOGIN)}
-                className="mt-4 text-sm font-semibold text-slate-500"
+                className="mt-4 text-sm font-semibold text-muted"
               >
                 Change mobile number
               </button>

@@ -7,7 +7,6 @@ import { ProcessingSteps } from '../components/ui/ProcessingSteps'
 import { LottiePlayer } from '../components/ui/LottiePlayer'
 import { Screen } from '../components/layout/Screen'
 import { eligibilityService } from '../services/eligibilityService'
-import { validatePan } from '../lib/validation'
 import { ROUTES } from '../navigation/routes'
 import { useAppStore } from '../store/useAppStore'
 import { useTimedSteps } from '../hooks/useTimedSteps'
@@ -21,25 +20,14 @@ export function PanScreen() {
   const setPan = useAppStore((state) => state.setPan)
   const setCurrentStep = useAppStore((state) => state.setCurrentStep)
   const [value, setValue] = useState(pan.panNumber)
-  const [error, setError] = useState<string | undefined>()
   const [verifying, setVerifying] = useState(false)
   const [done, setDone] = useState(pan.verified)
   const timed = useTimedSteps(verifying ? VERIFY_LABELS : [], 700)
 
   async function verify() {
-    const message = validatePan(value)
-    if (message) {
-      setError(message)
-      return
-    }
-    setError(undefined)
     setVerifying(true)
     const result = await eligibilityService.verifyPan(value, profile.fullName)
-    if (!result.success) {
-      setVerifying(false)
-      setError(result.message)
-      return
-    }
+    setValue(result.panNumber)
     setPan({
       panNumber: result.panNumber,
       verified: true,
@@ -76,13 +64,12 @@ export function PanScreen() {
           label="PAN number"
           value={value}
           maxLength={10}
-          error={error}
           onChange={(event) => setValue(event.target.value.toUpperCase())}
           placeholder="ABCDE1234F"
           hint="Format: 5 letters, 4 digits, 1 letter"
         />
         {verifying ? (
-          <div className="rounded-[22px] bg-white p-4 shadow-sm">
+          <div className="rounded-[22px] border border-line/70 bg-card p-4 card-shadow">
             <div className="mb-4 flex justify-center">
               <LottiePlayer name="loading" className="h-24 w-24" />
             </div>
@@ -93,7 +80,7 @@ export function PanScreen() {
           <motion.div
             initial={{ opacity: 0, transform: 'scale(0.96)' }}
             animate={{ opacity: 1, transform: 'scale(1)' }}
-            className="rounded-[22px] bg-emerald-50 p-5 text-center"
+            className="rounded-[22px] bg-success-soft p-5 text-center"
           >
             <div className="mx-auto flex h-24 w-24 items-center justify-center">
               <LottiePlayer name="success" loop={false} className="h-24 w-24" />

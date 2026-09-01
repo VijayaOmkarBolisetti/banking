@@ -32,8 +32,8 @@ export function AdminLoginScreen() {
   }
 
   return (
-    <div className="admin-stage items-center justify-center overflow-y-auto bg-slate-100 px-4 py-6 sm:px-6">
-      <div className="w-full max-w-md rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgb(15_23_42_/_0.08)] sm:p-8">
+    <div className="admin-stage items-center justify-center overflow-y-auto bg-subtle px-4 py-6 sm:px-6">
+      <div className="w-full max-w-md rounded-[28px] bg-card p-6 shadow-[var(--c-shadow-lift)] sm:p-8">
         <Logo size={48} />
         <h1 className="mt-5 text-2xl font-extrabold text-ink">CreditFlow Admin</h1>
         <p className="mt-1 text-sm text-muted">Control EMI range, limits and live operations.</p>
@@ -53,7 +53,7 @@ export function AdminLoginScreen() {
             Sign in
           </Button>
         </div>
-        <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm">
+        <div className="mt-5 rounded-2xl bg-subtle p-4 text-sm">
           <p className="font-semibold text-ink">Admin credentials</p>
           <p className="mt-2 text-muted">Email: {ADMIN_CREDENTIALS.email}</p>
           <p className="text-muted">Password: {ADMIN_CREDENTIALS.password}</p>

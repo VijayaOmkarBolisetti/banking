@@ -21,14 +21,14 @@ export function ProcessingSteps({ steps }: ProcessingStepsProps) {
                 ? 'bg-emerald-500 text-white'
                 : step.status === 'active'
                   ? 'bg-primary text-white'
-                  : 'bg-slate-100 text-slate-400'
+                  : 'bg-subtle text-faint'
             }`}
           >
             {step.status === 'done' ? <Check className="h-4 w-4" /> : null}
             {step.status === 'active' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : null}
-            {step.status === 'pending' ? <span className="h-1.5 w-1.5 rounded-full bg-slate-300" /> : null}
+            {step.status === 'pending' ? <span className="h-1.5 w-1.5 rounded-full bg-line" /> : null}
           </div>
           <AnimatePresence mode="wait">
             <motion.p
@@ -36,7 +36,7 @@ export function ProcessingSteps({ steps }: ProcessingStepsProps) {
               initial={{ opacity: 0.6 }}
               animate={{ opacity: 1 }}
               className={`text-sm font-medium ${
-                step.status === 'pending' ? 'text-slate-400' : 'text-ink'
+                step.status === 'pending' ? 'text-faint' : 'text-ink'
               }`}
             >
               {step.label}

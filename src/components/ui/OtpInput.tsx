@@ -70,10 +70,10 @@ export function OtpInput({ value, onChange, length = 6, error }: OtpInputProps) 
             onChange={(event) => handleChange(index, event.target.value)}
             onKeyDown={(event) => handleKeyDown(index, event)}
             onPaste={handlePaste}
-            className={`h-14 w-12 rounded-2xl border bg-white text-center text-xl font-bold text-ink outline-none transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+            className={`h-14 w-12 rounded-2xl border bg-card text-center text-xl font-bold text-ink outline-none transition-[border-color,box-shadow] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] ${
               error
-                ? 'border-red-300'
-                : 'border-line focus:border-primary focus:shadow-[0_0_0_4px_rgb(238_242_255)]'
+                ? 'border-danger/60'
+                : 'border-line focus:border-primary focus:shadow-[0_0_0_4px_var(--c-primary-ring)]'
             }`}
           />
         ))}

@@ -1,35 +1,27 @@
-import { validateMobile, validateOtp } from '../lib/validation'
+import { DEMO_MOBILE } from '../mock/data'
 import { simulateDelay } from './delay'
 
 export interface AuthResult {
   success: boolean
   message: string
+  /** Normalised 10-digit number — falls back to the demo number if blank. */
+  mobile: string
 }
 
+function normalise(mobile: string): string {
+  const digits = mobile.replace(/\D/g, '').slice(-10)
+  return digits.length === 10 ? digits : DEMO_MOBILE
+}
+
+/** Walkthrough build: any number and any 6-digit code are accepted. */
 export const authService = {
   async sendOtp(mobile: string): Promise<AuthResult> {
-    const error = validateMobile(mobile)
-    if (error) {
-      return { success: false, message: error }
-    }
-    await simulateDelay(900)
-    return {
-      success: true,
-      message: 'OTP sent to your mobile number',
-    }
+    await simulateDelay(800)
+    return { success: true, message: 'OTP sent to your mobile number', mobile: normalise(mobile) }
   },
 
-  async verifyOtp(mobile: string, otp: string): Promise<AuthResult> {
-    const mobileError = validateMobile(mobile)
-    if (mobileError) return { success: false, message: mobileError }
-
-    const otpError = validateOtp(otp)
-    if (otpError) return { success: false, message: otpError }
-
-    await simulateDelay(1100)
-    return {
-      success: true,
-      message: 'Mobile number verified',
-    }
+  async verifyOtp(mobile: string, _otp: string): Promise<AuthResult> {
+    await simulateDelay(1000)
+    return { success: true, message: 'Mobile number verified', mobile: normalise(mobile) }
   },
 }

@@ -20,11 +20,11 @@ export function Checkbox({ label, checked, className = '', id, ...props }: Check
           className="peer sr-only"
           {...props}
         />
-        <span className="flex h-5 w-5 items-center justify-center rounded-md border border-line bg-white transition-[background-color,border-color] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:shadow-[0_0_0_4px_rgb(238_242_255)]">
+        <span className="flex h-5 w-5 items-center justify-center rounded-md border border-line bg-card transition-[background-color,border-color] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:shadow-[0_0_0_4px_var(--c-primary-ring)]">
           {checked ? <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} /> : null}
         </span>
       </span>
-      <span className="text-sm leading-5 text-slate-600">{label}</span>
+      <span className="text-sm leading-5 text-muted">{label}</span>
     </label>
   )
 }

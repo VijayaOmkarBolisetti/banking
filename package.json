@@ -6,7 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "check:smoke": "node scripts/smoke-test.mjs",
+    "check:layout": "node scripts/check-layout.mjs",
+    "check:payment": "node scripts/check-payment.mjs",
+    "check:rate": "node scripts/check-rate.mjs",
+    "check:chat-loan": "node scripts/check-chat-loan.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

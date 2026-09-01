@@ -5,11 +5,14 @@ import { Screen } from '../components/layout/Screen'
 import { formatInr } from '../lib/format'
 import { ROUTES } from '../navigation/routes'
 import { useAppStore } from '../store/useAppStore'
+import { COIN_RATES } from '../lib/rewards'
 
 export function CreditApprovedScreen() {
   const navigate = useNavigate()
   const credit = useAppStore((state) => state.credit)
   const setCurrentStep = useAppStore((state) => state.setCurrentStep)
+  const awardCoins = useAppStore((state) => state.awardCoins)
+  const coinLedger = useAppStore((state) => state.coinLedger)
 
   return (
     <Screen
@@ -19,6 +22,10 @@ export function CreditApprovedScreen() {
         <Button
           onClick={() => {
             setCurrentStep('complete')
+            // One-time reward for finishing KYC — the first coins a user sees.
+            if (!coinLedger.some((entry) => entry.reason === 'onboarding')) {
+              awardCoins(COIN_RATES.onboarding, 'onboarding')
+            }
             navigate(ROUTES.DASHBOARD)
           }}
         >

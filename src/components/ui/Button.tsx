@@ -12,12 +12,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean
 }
 
+/**
+ * The primary button carries a subtle accent gradient rather than a flat fill —
+ * it reads as the one thing to press without needing a louder colour. The
+ * gradient is derived from the live accent, so it re-themes with everything else.
+ */
 const variants: Record<Variant, string> = {
   primary:
-    'bg-primary text-white shadow-[0_8px_20px_rgb(59_91_219_/_0.28)] disabled:bg-slate-300 disabled:shadow-none',
-  secondary: 'bg-primary-soft text-primary disabled:text-slate-400',
-  ghost: 'bg-transparent text-ink disabled:text-slate-400',
-  danger: 'bg-red-50 text-danger',
+    'bg-[linear-gradient(135deg,var(--c-primary),var(--c-primary-dark))] text-white shadow-[0_8px_20px_color-mix(in_srgb,var(--c-primary)_32%,transparent)] disabled:bg-none disabled:bg-line disabled:text-faint disabled:shadow-none',
+  secondary: 'bg-primary-soft text-primary disabled:text-faint',
+  ghost: 'bg-transparent text-ink disabled:text-faint',
+  danger: 'bg-danger-soft text-danger',
 }
 
 const sizes: Record<Size, string> = {

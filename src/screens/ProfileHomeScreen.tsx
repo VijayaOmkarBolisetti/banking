@@ -5,8 +5,10 @@ import {
   CircleHelp,
   CreditCard,
   FileText,
+  Gift,
   Lock,
   LogOut,
+  Palette,
   Shield,
   User,
 } from 'lucide-react'
@@ -17,6 +19,8 @@ import { ROUTES } from '../navigation/routes'
 import { useAppStore } from '../store/useAppStore'
 
 const rows = [
+  { label: 'Flow Coins & rewards', to: ROUTES.REWARDS, icon: Gift },
+  { label: 'Appearance', to: ROUTES.PROFILE_APPEARANCE, icon: Palette },
   { label: 'Personal Information', to: ROUTES.PROFILE_PERSONAL, icon: User },
   { label: 'Bank Account', to: ROUTES.PROFILE_BANK, icon: CreditCard },
   { label: 'Documents', to: ROUTES.PROFILE_DOCUMENTS, icon: FileText },
@@ -53,7 +57,7 @@ export function ProfileHomeScreen() {
           </div>
         </Card>
 
-        <div className="mt-4 overflow-hidden rounded-[22px] bg-white shadow-sm lg:mt-0 xl:grid xl:grid-cols-2 xl:gap-px xl:rounded-[24px] xl:bg-slate-100">
+        <div className="mt-4 overflow-hidden rounded-[22px] border border-line/70 bg-card card-shadow lg:mt-0 xl:grid xl:grid-cols-2 xl:gap-px xl:rounded-[24px] xl:bg-subtle">
           {rows.map((row, index) => {
             const Icon = row.icon
             return (
@@ -61,13 +65,13 @@ export function ProfileHomeScreen() {
                 key={row.label}
                 type="button"
                 onClick={() => navigate(row.to)}
-                className={`pressable flex w-full items-center gap-3 bg-white px-4 py-3.5 text-left lg:px-5 lg:py-4 ${
-                  index > 0 ? 'border-t border-slate-100 xl:border-t-0' : ''
+                className={`pressable flex w-full items-center gap-3 bg-card px-4 py-3.5 text-left lg:px-5 lg:py-4 ${
+                  index > 0 ? 'border-t border-line xl:border-t-0' : ''
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0 text-primary" />
                 <span className="flex-1 text-sm font-semibold">{row.label}</span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+                <ChevronRight className="h-4 w-4 shrink-0 text-faint" />
               </button>
             )
           })}
@@ -81,7 +85,7 @@ export function ProfileHomeScreen() {
           showToast('Signed out', 'info')
           navigate(ROUTES.LOGIN)
         }}
-        className="pressable mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-red-50 py-3.5 text-sm font-bold text-danger lg:mt-6 lg:max-w-xs"
+        className="pressable mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-danger-soft py-3.5 text-sm font-bold text-danger lg:mt-6 lg:max-w-xs"
       >
         <LogOut className="h-4 w-4" />
         Logout

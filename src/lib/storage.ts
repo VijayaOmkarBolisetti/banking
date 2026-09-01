@@ -1,57 +1,13 @@
-export interface KeyValueStorage {
-  getItem(key: string): Promise<string | null>
-  setItem(key: string, value: string): Promise<void>
-  removeItem(key: string): Promise<void>
-}
-
 export interface SyncStorage {
   getItem(name: string): string | null
   setItem(name: string, value: string): void
   removeItem(name: string): void
 }
 
-export function createMemoryStorage(): KeyValueStorage {
-  const map = new Map<string, string>()
-  return {
-    getItem: async (key) => map.get(key) ?? null,
-    setItem: async (key, value) => {
-      map.set(key, value)
-    },
-    removeItem: async (key) => {
-      map.delete(key)
-    },
-  }
-}
-
-export function createWebStorage(): KeyValueStorage {
-  return {
-    getItem: async (key) => {
-      if (typeof localStorage === 'undefined') return null
-      try {
-        return localStorage.getItem(key)
-      } catch {
-        return null
-      }
-    },
-    setItem: async (key, value) => {
-      if (typeof localStorage === 'undefined') return
-      try {
-        localStorage.setItem(key, value)
-      } catch {
-        /* ignore quota / private mode */
-      }
-    },
-    removeItem: async (key) => {
-      if (typeof localStorage === 'undefined') return
-      try {
-        localStorage.removeItem(key)
-      } catch {
-        /* ignore */
-      }
-    },
-  }
-}
-
+/**
+ * localStorage wrapper that degrades to a no-op instead of throwing.
+ * Private-browsing modes and quota errors must not take the app down.
+ */
 export const zustandSyncStorage: SyncStorage = {
   getItem: (name) => {
     if (typeof localStorage === 'undefined') return null
@@ -66,7 +22,7 @@ export const zustandSyncStorage: SyncStorage = {
     try {
       localStorage.setItem(name, value)
     } catch {
-      /* ignore */
+      /* ignore quota / private mode */
     }
   },
   removeItem: (name) => {
