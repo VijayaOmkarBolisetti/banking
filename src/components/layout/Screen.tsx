@@ -91,9 +91,9 @@ export function Screen({
       </div>
       {footer ? (
         <div className="screen-footer z-20 shrink-0 border-t border-line bg-card px-5 pt-3 lg:px-10">
-          <div className={`mx-auto w-full ${wide ? 'max-w-6xl 2xl:max-w-7xl' : 'max-w-md lg:max-w-xl'}`}>
-            {footer}
-          </div>
+          {/* The action stays a comfortable width even on a wide screen — a
+              full-bleed 1150px button is a hit target, not a call to action. */}
+          <div className="mx-auto w-full max-w-md">{footer}</div>
         </div>
       ) : null}
     </div>
