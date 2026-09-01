@@ -23,12 +23,17 @@ import { ROUTES } from '../navigation/routes'
 import { useAppStore } from '../store/useAppStore'
 import { useConfigStore } from '../store/useConfigStore'
 
-/** Four evenly spaced presets across the product's range, rounded to the step. */
+/**
+ * Four evenly spaced presets across the usable range, rounded to the step.
+ * Deduped: once the range is narrowed by a low credit limit, several fractions
+ * can round to the same amount, which would collide as React keys.
+ */
 function presetsFor(min: number, max: number, step: number): number[] {
-  return [0.15, 0.35, 0.6, 1].map((fraction) => {
+  const values = [0.15, 0.35, 0.6, 1].map((fraction) => {
     const raw = min + (max - min) * fraction
     return Math.min(max, Math.max(min, Math.round(raw / step) * step))
   })
+  return [...new Set(values)].sort((a, b) => a - b)
 }
 
 export function LoanApplyScreen() {
@@ -37,18 +42,31 @@ export function LoanApplyScreen() {
   const product = getProduct(isLoanProductId(productId) ? productId : 'personal')
 
   const profile = useAppStore((state) => state.profile)
+  const credit = useAppStore((state) => state.credit)
   const setPendingQuote = useAppStore((state) => state.setPendingQuote)
   const selectProduct = useAppStore((state) => state.selectProduct)
   const rate = useConfigStore((state) => state.productRates[product.id] ?? product.interestRate)
 
-  const [amount, setAmount] = useState(product.defaultAmount)
+  /*
+   * You can never request more than your remaining credit line. The product's
+   * published maximum is only an upper bound — the real ceiling is whichever
+   * of the two is smaller, which is what the CIBIL-derived limit controls.
+   */
+  const ceiling = Math.min(product.maxAmount, credit.available)
+  const belowMinimum = ceiling < product.minAmount
+
+  const [amount, setAmount] = useState(() => Math.min(product.defaultAmount, ceiling))
   const [tenure, setTenure] = useState(product.defaultTenure)
   // Instant products fold the agreement in here instead of a review screen.
   const [agreed, setAgreed] = useState(false)
 
+  // Clamp on every render so a limit that shrinks (an admin edit, a new loan)
+  // can't leave a stale over-limit amount in the slider.
+  const safeAmount = Math.min(Math.max(amount, product.minAmount), Math.max(ceiling, product.minAmount))
+
   const quote = useMemo(
-    () => loanService.getQuote(product.id, amount, tenure),
-    [product.id, amount, tenure],
+    () => loanService.getQuote(product.id, safeAmount, tenure),
+    [product.id, safeAmount, tenure],
   )
 
   const income = Number(profile.monthlyIncome) || 0
@@ -56,6 +74,7 @@ export function LoanApplyScreen() {
   const stretched = income > 0 && burden > 50
 
   function proceed() {
+    if (belowMinimum) return
     selectProduct(product.id)
     setPendingQuote(quote)
     if (product.extraStep) {
@@ -80,7 +99,7 @@ export function LoanApplyScreen() {
       footer={
         <Button
           onClick={proceed}
-          disabled={product.skipReview && !agreed}
+          disabled={belowMinimum || (product.skipReview && !agreed)}
           style={product.skipReview && !agreed ? undefined : { background: productGradient(product, '120deg') }}
         >
           {product.skipReview ? <Zap className="h-4 w-4" /> : null}
@@ -88,6 +107,21 @@ export function LoanApplyScreen() {
         </Button>
       }
     >
+      {belowMinimum ? (
+        <motion.div
+          className="mt-3 flex items-start gap-2.5 rounded-[20px] border border-warning/30 bg-warning-soft px-4 py-3.5"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+          <p className="text-[13px] leading-5 text-ink">
+            You have <span className="font-bold">{formatInr(credit.available)}</span> of credit
+            available, below the {formatInr(product.minAmount)} minimum for a {product.name}. Clear
+            an EMI to free up your limit, or pick a smaller product.
+          </p>
+        </motion.div>
+      ) : null}
+
       <div className="mt-3 lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-6">
         <div>
           <motion.div
@@ -109,14 +143,20 @@ export function LoanApplyScreen() {
 
           <Card className="mt-4" padding="lg">
             <AmountSlider
-              value={amount}
+              value={safeAmount}
               min={product.minAmount}
-              max={product.maxAmount}
+              max={Math.max(ceiling, product.minAmount)}
               step={product.amountStep}
               accent={product.accent}
-              presets={presetsFor(product.minAmount, product.maxAmount, product.amountStep)}
+              presets={presetsFor(product.minAmount, ceiling, product.amountStep)}
               onChange={setAmount}
             />
+            {ceiling < product.maxAmount && !belowMinimum ? (
+              <p className="mt-3 rounded-xl bg-subtle px-3 py-2 text-[11px] leading-5 text-muted">
+                Capped at your available credit of {formatInr(credit.available)}. Clear an EMI or
+                improve your CIBIL score to borrow more.
+              </p>
+            ) : null}
           </Card>
 
           <p className="mt-5 mb-2 text-sm font-semibold text-ink">Tenure</p>

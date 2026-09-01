@@ -12,7 +12,8 @@
     "check:layout": "node scripts/check-layout.mjs",
     "check:payment": "node scripts/check-payment.mjs",
     "check:rate": "node scripts/check-rate.mjs",
-    "check:chat-loan": "node scripts/check-chat-loan.mjs"
+    "check:chat-loan": "node scripts/check-chat-loan.mjs",
+    "check:limit": "node scripts/check-limit-cap.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
