@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   Palette,
+  Scale,
   Settings,
   Smartphone,
   Users,
@@ -22,6 +23,7 @@ import { logOperation, useAdminStore } from '../../store/useAdminStore'
 const links = [
   { to: ROUTES.ADMIN_HOME, label: 'Overview', icon: LayoutDashboard, end: true },
   { to: ROUTES.ADMIN_SETTINGS, label: 'Product controls', icon: Settings, end: false },
+  { to: ROUTES.ADMIN_RULES, label: 'Rules', icon: Scale, end: false },
   { to: ROUTES.ADMIN_OPERATIONS, label: 'Operations', icon: Activity, end: false },
   { to: ROUTES.ADMIN_CUSTOMERS, label: 'Customers', icon: Users, end: false },
   { to: ROUTES.ADMIN_LOANS, label: 'Loans & EMIs', icon: CreditCard, end: false },
@@ -32,6 +34,7 @@ const links = [
 const PAGE_TITLES: Record<string, string> = {
   [ROUTES.ADMIN_HOME]: 'Overview',
   [ROUTES.ADMIN_SETTINGS]: 'Product controls',
+  [ROUTES.ADMIN_RULES]: 'Rules',
   [ROUTES.ADMIN_OPERATIONS]: 'Operations',
   [ROUTES.ADMIN_CUSTOMERS]: 'Customers',
   [ROUTES.ADMIN_LOANS]: 'Loans & EMIs',

@@ -46,6 +46,7 @@ export const ROUTES = {
   ADMIN_LOGIN: '/admin/login',
   ADMIN_HOME: '/admin',
   ADMIN_SETTINGS: '/admin/settings',
+  ADMIN_RULES: '/admin/rules',
   ADMIN_OPERATIONS: '/admin/operations',
   ADMIN_CUSTOMERS: '/admin/customers',
   ADMIN_LOANS: '/admin/loans',

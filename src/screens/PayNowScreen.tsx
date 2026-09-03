@@ -14,6 +14,7 @@ import { getProduct, productGradient } from '../lib/loanProducts'
 import { paymentService } from '../services/paymentService'
 import { ROUTES } from '../navigation/routes'
 import { selectNextEmi, useAppStore } from '../store/useAppStore'
+import { formatContactHour, useRulesStore } from '../store/useRulesStore'
 import type { PaymentMethod } from '../types'
 
 const METHODS: { id: PaymentMethod; label: string; hint: string; icon: typeof Smartphone }[] = [
@@ -29,6 +30,7 @@ export function PayNowScreen() {
   const showToast = useAppStore((state) => state.showToast)
 
   const next = selectNextEmi({ loans })
+  const rules = useRulesStore()
   const [method, setMethod] = useState<PaymentMethod>('upi')
   const [phase, setPhase] = useState<'form' | 'processing' | 'success'>('form')
   // Captured before payment so the success screen still has something to show.
@@ -146,6 +148,15 @@ export function PayNowScreen() {
           </div>
         </div>
         <p className="mt-4 text-xs text-white/70">{next.loan.productName}</p>
+      </Card>
+
+      <Card className="mt-3 border border-warning/25 bg-warning/10" padding="sm">
+        <p className="text-xs leading-relaxed text-ink">
+          <span className="font-bold">Missed payment:</span> after {rules.gracePeriodDays} days grace,
+          a bounce fee of {formatInr(rules.bounceFeeFlat)} plus {rules.lateFeePercent}% late fee may
+          apply. New draws pause from day {rules.blockDrawFromDpd}. Recovery contact only{' '}
+          {formatContactHour(rules.agentContactFromHour)}–{formatContactHour(rules.agentContactToHour)}.
+        </p>
       </Card>
 
       <p className="mt-5 mb-2 text-sm font-bold text-ink">Payment options</p>

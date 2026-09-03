@@ -345,6 +345,40 @@ export interface ProductConfig {
   firstDueDate: string
 }
 
+/** Lender collection / bounce / recovery policy configured in Admin → Rules. */
+export interface CollectionRules {
+  /** Days after due date before any penalty applies. */
+  gracePeriodDays: number
+  /** Flat bounce fee charged when an EMI / Autopay mandate fails (₹). */
+  bounceFeeFlat: number
+  /** Extra late fee as % of EMI amount after grace. */
+  lateFeePercent: number
+  /** Cap on total late + bounce fees as % of EMI (0 = no cap). */
+  maxPenaltyPercentOfEmi: number
+  /** DPD day when soft reminders (SMS / WhatsApp) start. */
+  softReminderFromDpd: number
+  /** DPD day when call-centre outreach starts. */
+  callCentreFromDpd: number
+  /** DPD day when field recovery agents may visit. */
+  fieldAgentFromDpd: number
+  /** DPD day when legal / demand notice is issued. */
+  legalNoticeFromDpd: number
+  /** Block further draws from the credit line from this DPD. */
+  blockDrawFromDpd: number
+  /** Max field visits a recovery agent may make per week. */
+  maxAgentVisitsPerWeek: number
+  /** Earliest hour (0–23, local) agents may call / visit. */
+  agentContactFromHour: number
+  /** Latest hour (0–23, local) agents may call / visit. */
+  agentContactToHour: number
+  /** Foreclosure / prepayment fee as % of outstanding principal. */
+  foreclosureFeePercent: number
+  /** Allow part-payment of an EMI. */
+  allowPartPayment: boolean
+  /** Auto-create a charge transaction when bounce is detected (demo). */
+  autoChargeBounceFee: boolean
+}
+
 export type OperationActor = 'customer' | 'admin'
 export type OperationType =
   | 'login'
@@ -353,6 +387,7 @@ export type OperationType =
   | 'loan'
   | 'payment'
   | 'settings'
+  | 'rules'
   | 'support'
   | 'admin'
 

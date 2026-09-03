@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { CalendarDays, History, Layers, Wallet } from 'lucide-react'
+import { AlertTriangle, CalendarDays, History, Layers, Wallet } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { Chip, emiTone } from '../components/ui/Chip'
@@ -16,6 +16,7 @@ import {
   selectTotalOutstanding,
   useAppStore,
 } from '../store/useAppStore'
+import { formatContactHour, useRulesStore } from '../store/useRulesStore'
 
 const shortcuts = [
   { label: 'Schedule', hint: 'Every EMI', to: ROUTES.REPAYMENT_SCHEDULE, icon: CalendarDays },
@@ -26,11 +27,19 @@ const shortcuts = [
 export function PaymentsTabScreen() {
   const navigate = useNavigate()
   const loans = useAppStore((state) => state.loans)
+  const rules = useRulesStore()
 
   const next = selectNextEmi({ loans })
   const openLoans = selectOpenLoans({ loans })
   const outstanding = selectTotalOutstanding({ loans })
   const monthly = selectMonthlyOutflow({ loans })
+
+  const recoverySteps = [
+    { label: 'SMS / WhatsApp reminder', from: rules.softReminderFromDpd },
+    { label: 'Call centre outreach', from: rules.callCentreFromDpd },
+    { label: 'Field recovery agent visit', from: rules.fieldAgentFromDpd },
+    { label: 'Legal / demand notice', from: rules.legalNoticeFromDpd },
+  ]
 
   return (
     <TabPage title="Payments" subtitle="Manage EMIs across every loan you hold.">
@@ -80,11 +89,66 @@ export function PaymentsTabScreen() {
               </Card>
             </div>
           ) : null}
+
+          <Card className="mt-4" padding="md">
+            <div className="flex items-start gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-warning/15 text-warning">
+                <AlertTriangle className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-bold text-ink">If an EMI bounces</p>
+                <p className="mt-0.5 text-xs text-muted">
+                  Charges and recovery steps set by your lender. Pay on time to avoid these.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="rounded-2xl bg-subtle px-3 py-2.5">
+                <p className="text-[10px] font-semibold tracking-wide text-muted uppercase">Grace</p>
+                <p className="mt-0.5 text-sm font-bold text-ink">{rules.gracePeriodDays} days</p>
+              </div>
+              <div className="rounded-2xl bg-subtle px-3 py-2.5">
+                <p className="text-[10px] font-semibold tracking-wide text-muted uppercase">Bounce fee</p>
+                <p className="mt-0.5 text-sm font-bold text-ink">{formatInr(rules.bounceFeeFlat)}</p>
+              </div>
+              <div className="rounded-2xl bg-subtle px-3 py-2.5">
+                <p className="text-[10px] font-semibold tracking-wide text-muted uppercase">Late fee</p>
+                <p className="mt-0.5 text-sm font-bold text-ink">{rules.lateFeePercent}% of EMI</p>
+              </div>
+              <div className="rounded-2xl bg-subtle px-3 py-2.5">
+                <p className="text-[10px] font-semibold tracking-wide text-muted uppercase">Draw block</p>
+                <p className="mt-0.5 text-sm font-bold text-ink">From day {rules.blockDrawFromDpd}</p>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs font-bold tracking-wide text-muted uppercase">
+              When we contact you
+            </p>
+            <ol className="mt-2 space-y-2">
+              {recoverySteps.map((step) => (
+                <li
+                  key={step.label}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-line/60 px-3 py-2"
+                >
+                  <span className="min-w-0 text-sm text-ink">{step.label}</span>
+                  <span className="shrink-0 text-xs font-bold text-primary">Day {step.from}+</span>
+                </li>
+              ))}
+            </ol>
+
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              Field agents may visit from day {rules.fieldAgentFromDpd}, up to{' '}
+              {rules.maxAgentVisitsPerWeek} time(s) a week, only between{' '}
+              {formatContactHour(rules.agentContactFromHour)} and{' '}
+              {formatContactHour(rules.agentContactToHour)}. Foreclosure fee:{' '}
+              {rules.foreclosureFeePercent}% of outstanding principal
+              {rules.allowPartPayment ? '. Part-payment of EMI is allowed.' : '.'}
+            </p>
+          </Card>
         </div>
 
         <div className="mt-4 lg:mt-0">
-          {/* Equal-height tiles: the label sits on a fixed baseline so a
-              two-line hint can't shove one tile's text out of line. */}
           <div className="grid grid-cols-3 gap-2.5 lg:grid-cols-1 lg:gap-2.5">
             {shortcuts.map((item) => {
               const Icon = item.icon

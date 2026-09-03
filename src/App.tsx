@@ -73,6 +73,9 @@ const AdminSupportScreen = lazy(() =>
 const AdminAppearanceScreen = lazy(() =>
   import('./screens/admin/AdminAppearanceScreen').then((m) => ({ default: m.AdminAppearanceScreen })),
 )
+const AdminRulesScreen = lazy(() =>
+  import('./screens/admin/AdminRulesScreen').then((m) => ({ default: m.AdminRulesScreen })),
+)
 
 function CustomerRoutes() {
   const location = useLocation()
@@ -164,6 +167,7 @@ function AdminRoutes() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardScreen />} />
           <Route path="settings" element={<AdminSettingsScreen />} />
+          <Route path="rules" element={<AdminRulesScreen />} />
           <Route path="operations" element={<AdminOperationsScreen />} />
           <Route path="customers" element={<AdminCustomersScreen />} />
           <Route path="loans" element={<AdminLoansScreen />} />
